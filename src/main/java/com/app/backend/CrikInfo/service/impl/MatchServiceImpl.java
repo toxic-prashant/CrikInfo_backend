@@ -35,7 +35,7 @@ public class MatchServiceImpl implements MatchService {
       String url = "https://www.cricbuzz.com/cricket-match/live-scores";
       Document document = Jsoup.connect(url).get();
       Elements liveScoreElements = document.select("div.cb-mtch-lst.cb-tms-itm");
-      for (Element match: liveScoreElements) {
+      for (Element match : liveScoreElements) {
         HashMap<String, String> liveMatchInfo = new LinkedHashMap<>();
         String teamsHeading = match.select("h3.cb-lv-scr-mtch-hdr").select("a").text();
         String matchNumberVenue = match.select("span").text();
@@ -48,7 +48,8 @@ public class MatchServiceImpl implements MatchService {
         String textLive = match.select("div.cb-text-live").text();
         String textComplete = match.select("div.cb-text-complete").text();
         // getting match link
-        String matchLink = match.select("a.cb-lv-scrs-well.cb-lv-scrs-well-live").attr("href").toString();
+        String matchLink =
+            match.select("a.cb-lv-scrs-well.cb-lv-scrs-well-live").attr("href").toString();
 
         Match match1 = new Match();
         match1.setTeamHeading(teamsHeading);
@@ -82,37 +83,39 @@ public class MatchServiceImpl implements MatchService {
     }
   }
 
-
-
   @Override
   public List<List<String>> getPointTable() {
     List<List<String>> pointTable = new ArrayList<>();
-    String tableUrl = "https://www.cricbuzz.com/cricket-series/6732/icc-cricket-world-cup-2023/points-table";
+    String tableUrl =
+        "https://www.cricbuzz.com/cricket-series/6732/icc-cricket-world-cup-2023/points-table";
     try {
       Document document = Jsoup.connect(tableUrl).get();
       Elements table = document.select("table.cb-srs-pnts");
       Elements tableHeads = table.select("thead>tr>*");
       List<String> headers = new ArrayList<>();
-      tableHeads.forEach(element -> {
-        headers.add(element.text());
-      });
+      tableHeads.forEach(
+          element -> {
+            headers.add(element.text());
+          });
       pointTable.add(headers);
       Elements bodyTrs = table.select("tbody>*");
-      bodyTrs.forEach(tr -> {
-        List<String> points = new ArrayList<>();
-        if (tr.hasAttr("class")) {
-          Elements tds = tr.select("td");
-          String team = tds.get(0).select("div.cb-col-84").text();
-          points.add(team);
-          tds.forEach(td -> {
-            if (!td.hasClass("cb-srs-pnts-name")) {
-              points.add(td.text());
+      bodyTrs.forEach(
+          tr -> {
+            List<String> points = new ArrayList<>();
+            if (tr.hasAttr("class")) {
+              Elements tds = tr.select("td");
+              String team = tds.get(0).select("div.cb-col-84").text();
+              points.add(team);
+              tds.forEach(
+                  td -> {
+                    if (!td.hasClass("cb-srs-pnts-name")) {
+                      points.add(td.text());
+                    }
+                  });
+              //          System.out.println(points);
+              pointTable.add(points);
             }
           });
-//          System.out.println(points);
-          pointTable.add(points);
-        }
-      });
       System.out.println(pointTable);
     } catch (Exception e) {
       e.printStackTrace();
